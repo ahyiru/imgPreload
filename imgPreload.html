@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+<meta charset="utf-8">
+<title>test</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="description" content="share">
+<meta name="keywords" content="web,app,分享,逸儒">
+<meta name="author" content="yiru,ah.yiru@gmail.com">
+<meta name="viewport" content="initial-scale=1.0,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-title" content="be yourself">
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://cdn.bootcss.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<style>
+	.myloading{
+		background:#f60;
+		width:100%;
+		position:absolute;
+		left:0;
+		top:0;
+		z-index:999;
+	}
+</style>
+</head>
+<body>
+
+<button id="pre">上一张</button>
+<button id="next">下一张</button>
+<div class="myimg"></div>	
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script>
+	//preload
+	$(function(){
+		var url=[],img=[],baseUrl='http://www.ahyiru.com/com/solar/img/';
+        var start=0,step=3,total=7;
+
+        var loadImg=function(start,step){
+
+            for(var i=start;i<start+step;i++){
+                url.push(baseUrl+''+(i+1)+'.jpg');
+
+                img[i]=new Image();
+                img[i].src=url[i];
+
+            }
+        };
+        loadImg(start,step);
+
+        var h=$(document).height();
+        var loading='<div class="myloading" style="height:'+h+'px"></div>';
+
+        var showImg=function(n){
+
+            if(img[n].complete){
+                $('.myimg').html(img[n]);
+                $('.myimg>img').attr('urlno',n);
+                return;
+            }
+            //页面加载时...
+            $('body').append(loading);
+            //$('body').css('opacity',0.5);
+            img[n].onload=function(){
+            	$('.myloading').remove();
+                $('.myimg').html(img[n]);
+                $('.myimg>img').attr('urlno',n);
+            }
+        };
+        showImg(0);
+
+        $('#next').on('click',function(){
+            var i=$('.myimg>img').attr('urlno')-0;
+            var n=i+1;
+            if(n>total-1) return;
+            showImg(n);
+            var nStart=step-1+n;
+            if(nStart>total-1) return;
+            loadImg(step-1+n,1);
+        });
+        $('#pre').on('click',function(){
+            var i=$('.myimg>img').attr('urlno')-0;
+            var n=i-1;
+            if(n<0) return;
+            showImg(n);
+        });
+	})
+</script>
+
+</body>
+</html>
